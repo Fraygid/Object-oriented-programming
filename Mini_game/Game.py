@@ -23,8 +23,6 @@ class Monster():
     def show_status(self):
         print(f'{self.__name}, HP: {self.__hp}')
 
-m = Monster("Зомби", 100, 10)
-m.show_status()     # [Зомби] HP: 100
-m.set_hp(-50)
-m.show_status()     # [Зомби] HP: 0
-print(m.is_alive()) # False
+class Zombie(Monster):
+    def __init__(self, hp, dmg):
+        
