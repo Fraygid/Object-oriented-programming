@@ -6,5 +6,5 @@ class Monster:
         print(f'Я {self.name}, и я хочу кушать!')
 
 
-m = Monster('Упырь')
-m.introduce()
+mon = Monster('Упырь')
+mon.introduce()
