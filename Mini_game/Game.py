@@ -76,3 +76,35 @@ class Werewolf(Monster):
         if self.get_hp() < 50 and not self._transformed:
             print(f'{self.get_name} трансформируется!')
             self._transformed = True
+
+
+# ----- 3 ЭТАП -----
+
+class Weapon:
+    def __init__(self, name):
+        self.name = name
+
+    def use(self):
+        pass
+
+class SilverSword(Weapon):
+    def __init__(self):
+        super().__init__('Серебрянный меч')
+        self.damage = 30
+
+    def use(self, monster):
+        print(f'Охотник наносит удар {self.name}! ({self.damage} урона)')
+        monster.take_damage(self.damage)
+
+class HolyWater(Weapon):
+    def __init__(self):
+        super().__init__('Святая вода')
+
+    def use(self, monster):
+        print(f'Охотник обрызгивает {self.name}! ({self.damage} урона)')
+
+weapons = [SilverSword(), HolyWater()]
+zombie = Zombie("Зомби")
+for w in weapons:
+    w.use(zombie)
+# Полиморфизм: один цикл — три разных удара!
