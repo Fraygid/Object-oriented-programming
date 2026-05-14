@@ -1,6 +1,5 @@
 import random
 
-
 # ----- 1 ЭТАП -----
 
 class Monster():
@@ -47,7 +46,6 @@ class Zombie(Monster):
         self.set_hp(self.get_hp() - damage)
         print(f'{self.get_name()} теряет конечность! Получено: {damage} урона. HP: {self.get_hp()}')
 
-
 class Vampire(Monster):
     def __init__(self, name='Вампир'):
         super().__init__(name, 80, 15)
@@ -56,7 +54,6 @@ class Vampire(Monster):
         absorbed = damage - 5
         self.set_hp(self.get_hp() - absorbed)
         print(f'{self.get_name()} поглощает 5 единиц урона! Получено: {absorbed} урона. HP: {self.get_hp()}')
-
 
 class Ghost(Monster):
     def __init__(self, name='Призрак'):
@@ -68,7 +65,6 @@ class Ghost(Monster):
         else:
             self.set_hp(self.get_hp() - damage)
             print(f'{self.get_name()} пропускает удар сквозь себя! Получено: {damage} урона. HP: {self.get_hp()}')
-
 
 class Werewolf(Monster):
     def __init__(self, name='Оборотень'):
@@ -92,7 +88,6 @@ class Weapon:
     def use(self, monster):
         pass
 
-
 class SilverSword(Weapon):
     def __init__(self):
         super().__init__("Серебряный меч")
@@ -102,7 +97,6 @@ class SilverSword(Weapon):
         print(f"Охотник наносит удар {self.name}! ({self.damage} урона)")
         monster.take_damage(self.damage)
 
-
 class HolyWater(Weapon):
     def __init__(self):
         super().__init__("Святая вода")
@@ -111,7 +105,6 @@ class HolyWater(Weapon):
     def use(self, monster):
         print(f"Охотник брызгает {self.name}! ({self.damage} урона)")
         monster.take_damage(self.damage)
-
 
 class CrossbowBolt(Weapon):
     def __init__(self):
@@ -151,8 +144,10 @@ class Hunter:
 
     def show_inventory(self):
         print(f"Инвентарь {self.__name}:")
-        for i, w in enumerate(self.__weapons, 1):
-            print(f"{i}. {w.name}")
+        count = 1
+        for weapon in self.__weapons:
+            print(f'{count}. {weapon.name}')
+            count += 1
 
     def attack(self, weapon_index, monster):
         if 0 <= weapon_index < len(self.__weapons):
