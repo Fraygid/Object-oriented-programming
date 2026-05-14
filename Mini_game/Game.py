@@ -123,11 +123,17 @@ class Hunter:
         self.__hp = 100
         self.__weapons = []
 
-    def get_name(self): return self.__name
-    def get_hp(self): return self.__hp
+    def get_name(self):
+        return self.__name
+        
+    def get_hp(self):
+        return self.__hp
 
     def set_hp(self, value):
-        self.__hp = max(0, value)
+        if value < 0:
+            self.__hp = 0
+        else:
+            self.__hp = value
 
     def add_weapon(self, weapon):
         self.__weapons.append(weapon)
@@ -136,7 +142,7 @@ class Hunter:
         return len(self.__weapons)
 
     def show_inventory(self):
-        print(f"🎒 Инвентарь {self.__name}:")
+        print(f"Инвентарь {self.__name}:")
         for i, w in enumerate(self.__weapons, 1):
             print(f"{i}. {w.name}")
 
@@ -144,7 +150,7 @@ class Hunter:
         if 0 <= weapon_index < len(self.__weapons):
             self.__weapons[weapon_index].use(monster)
         else:
-            print("⚠️ Неверный индекс оружия!")
+            print("Неверный индекс оружия!")
 
     def is_alive(self):
         return self.__hp > 0
@@ -167,11 +173,11 @@ def run_game():
         Werewolf("Оборотень")
     ]
 
-    print(f"🏰 Начинаем зачистку замка! Впереди {len(monsters)} монстров.")
+    print(f"Начинаем зачистку замка! Впереди {len(monsters)} монстров.")
     print("=" * 40)
 
     for monster in monsters:
-        print(f"\n👹 Появляется {monster.get_name()}!")
+        print(f"Появляется {monster.get_name()}!")
         turn = 0
         
         while monster.is_alive() and hunter.is_alive():
@@ -179,14 +185,14 @@ def run_game():
             hunter.attack(weapon_idx, monster)
 
             if not monster.is_alive():
-                print(f"✅ {monster.get_name()} повержен!")
+                print(f"{monster.get_name()} повержен!")
                 break
 
             monster.attack_hunter(hunter)
-            print(f"🛡️ {hunter.get_name()} HP: {hunter.get_hp()}")
+            print(f"{hunter.get_name()} HP: {hunter.get_hp()}")
 
             if not hunter.is_alive():
-                print(f"💀 {hunter.get_name()} пал в бою!")
+                print(f"{hunter.get_name()} пал в бою!")
                 break
 
             turn += 1
@@ -194,8 +200,8 @@ def run_game():
 
     print("\n" + "=" * 40)
     if hunter.is_alive():
-        print("🏆 ПОБЕДА! Замок полностью зачищен от нечисти.")
+        print("ПОБЕДА! Замок полностью зачищен от нечисти.")
     else:
-        print("💀 ПОРАЖЕНИЕ. Нечисть оказалась сильнее.")
+        print("ПОРАЖЕНИЕ. Нечисть оказалась сильнее.")
 
 run_game()
