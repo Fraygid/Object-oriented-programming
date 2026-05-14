@@ -172,8 +172,8 @@ def run_game():
     monsters = [
         Zombie("Зомби"),
         Vampire("Дракула"),
-        Ghost("Призрак"),
-        Werewolf("Оборотень")
+        Ghost("Каспер"),
+        Werewolf("Фенрир Сивый")
     ]
 
     print(f"Начинаем зачистку замка! Впереди {len(monsters)} монстров.")
