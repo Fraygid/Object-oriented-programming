@@ -210,19 +210,3 @@ def run_game():
         print("ПОРАЖЕНИЕ. Нечисть оказалась сильнее.")
 
 run_game()
-
-hunter = Hunter("Ван Хельсинг")
-hunter.add_weapon(SilverSword())
-hunter.add_weapon(HolyWater())
-hunter.show_inventory()
-print(f'Количество оружия: {hunter.get_weapon_count()}')
-
-print("")
-zomb = Zombie("Зомбе")
-hunter.attack(0, zomb)
-hunter.attack(1, zomb)
-print("")
-if hunter.is_alive():
-    print(f'Охотник жив')
-else:
-    print('Охотник погиб')
