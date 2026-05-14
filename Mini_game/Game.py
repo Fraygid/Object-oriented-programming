@@ -1,5 +1,6 @@
 import random
 
+
 # ----- 1 ЭТАП -----
 
 class Monster():
@@ -35,6 +36,7 @@ class Monster():
     def attack_hunter(self, hunter):
         hunter.set_hp(hunter.get_hp() - self.get_dmg())
 
+
 # ----- 2 ЭТАП -----
 
 class Zombie(Monster):
@@ -45,6 +47,7 @@ class Zombie(Monster):
         self.set_hp(self.get_hp() - damage)
         print(f'{self.get_name()} теряет конечность! Получено: {damage} урона. HP: {self.get_hp()}')
 
+
 class Vampire(Monster):
     def __init__(self, name='Вампир'):
         super().__init__(name, 80, 15)
@@ -53,6 +56,7 @@ class Vampire(Monster):
         absorbed = damage - 5
         self.set_hp(self.get_hp() - absorbed)
         print(f'{self.get_name()} поглощает 5 единиц урона! Получено: {absorbed} урона. HP: {self.get_hp()}')
+
 
 class Ghost(Monster):
     def __init__(self, name='Призрак'):
@@ -64,6 +68,7 @@ class Ghost(Monster):
         else:
             self.set_hp(self.get_hp() - damage)
             print(f'{self.get_name()} пропускает удар сквозь себя! Получено: {damage} урона. HP: {self.get_hp()}')
+
 
 class Werewolf(Monster):
     def __init__(self, name='Оборотень'):
@@ -87,6 +92,7 @@ class Weapon:
     def use(self, monster):
         pass
 
+
 class SilverSword(Weapon):
     def __init__(self):
         super().__init__("Серебряный меч")
@@ -96,6 +102,7 @@ class SilverSword(Weapon):
         print(f"Охотник наносит удар {self.name}! ({self.damage} урона)")
         monster.take_damage(self.damage)
 
+
 class HolyWater(Weapon):
     def __init__(self):
         super().__init__("Святая вода")
@@ -104,6 +111,7 @@ class HolyWater(Weapon):
     def use(self, monster):
         print(f"Охотник брызгает {self.name}! ({self.damage} урона)")
         monster.take_damage(self.damage)
+
 
 class CrossbowBolt(Weapon):
     def __init__(self):
@@ -125,7 +133,7 @@ class Hunter:
 
     def get_name(self):
         return self.__name
-        
+
     def get_hp(self):
         return self.__hp
 
@@ -177,9 +185,10 @@ def run_game():
     print("=" * 40)
 
     for monster in monsters:
+        print("")
         print(f"Появляется {monster.get_name()}!")
         turn = 0
-        
+
         while monster.is_alive() and hunter.is_alive():
             weapon_idx = turn % hunter.get_weapon_count()
             hunter.attack(weapon_idx, monster)
@@ -189,6 +198,7 @@ def run_game():
                 break
 
             monster.attack_hunter(hunter)
+            print(f'{monster.get_name()} атакует! Нанесено {monster.get_dmg()} урона!')
             print(f"{hunter.get_name()} HP: {hunter.get_hp()}")
 
             if not hunter.is_alive():
@@ -198,7 +208,7 @@ def run_game():
             turn += 1
             print("-" * 30)
 
-    print("\n" + "=" * 40)
+    print("=" * 40)
     if hunter.is_alive():
         print("ПОБЕДА! Замок полностью зачищен от нечисти.")
     else:
