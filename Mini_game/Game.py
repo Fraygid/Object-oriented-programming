@@ -84,27 +84,118 @@ class Weapon:
     def __init__(self, name):
         self.name = name
 
-    def use(self):
+    def use(self, monster):
         pass
 
 class SilverSword(Weapon):
     def __init__(self):
-        super().__init__('Серебрянный меч')
+        super().__init__("Серебряный меч")
         self.damage = 30
 
     def use(self, monster):
-        print(f'Охотник наносит удар {self.name}! ({self.damage} урона)')
+        print(f"Охотник наносит удар {self.name}! ({self.damage} урона)")
         monster.take_damage(self.damage)
 
 class HolyWater(Weapon):
     def __init__(self):
-        super().__init__('Святая вода')
+        super().__init__("Святая вода")
+        self.damage = 20
 
     def use(self, monster):
-        print(f'Охотник обрызгивает {self.name}! ({self.damage} урона)')
+        print(f"Охотник брызгает {self.name}! ({self.damage} урона)")
+        monster.take_damage(self.damage)
 
-weapons = [SilverSword(), HolyWater()]
-zombie = Zombie("Зомби")
-for w in weapons:
-    w.use(zombie)
-# Полиморфизм: один цикл — три разных удара!
+class CrossbowBolt(Weapon):
+    def __init__(self):
+        super().__init__("Арбалет с болтом")
+        self.damage = 25
+
+    def use(self, monster):
+        print(f"Охотник стреляет из {self.name}! ({self.damage} урона)")
+        monster.take_damage(self.damage)
+
+
+# ----- 4 ЭТАП -----
+
+class Hunter:
+    def __init__(self, name):
+        self.__name = name
+        self.__hp = 100
+        self.__weapons = []
+
+    def get_name(self): return self.__name
+    def get_hp(self): return self.__hp
+
+    def set_hp(self, value):
+        self.__hp = max(0, value)
+
+    def add_weapon(self, weapon):
+        self.__weapons.append(weapon)
+
+    def get_weapon_count(self):
+        return len(self.__weapons)
+
+    def show_inventory(self):
+        print(f"🎒 Инвентарь {self.__name}:")
+        for i, w in enumerate(self.__weapons, 1):
+            print(f"{i}. {w.name}")
+
+    def attack(self, weapon_index, monster):
+        if 0 <= weapon_index < len(self.__weapons):
+            self.__weapons[weapon_index].use(monster)
+        else:
+            print("⚠️ Неверный индекс оружия!")
+
+    def is_alive(self):
+        return self.__hp > 0
+
+
+# ----- 5 ЭТАП -----
+
+def run_game():
+    hunter = Hunter("Ван Хельсинг")
+    hunter.add_weapon(SilverSword())
+    hunter.add_weapon(HolyWater())
+    hunter.add_weapon(CrossbowBolt())
+    hunter.show_inventory()
+    print("-" * 40)
+
+    monsters = [
+        Zombie("Зомби"),
+        Vampire("Дракула"),
+        Ghost("Призрак"),
+        Werewolf("Оборотень")
+    ]
+
+    print(f"🏰 Начинаем зачистку замка! Впереди {len(monsters)} монстров.")
+    print("=" * 40)
+
+    for monster in monsters:
+        print(f"\n👹 Появляется {monster.get_name()}!")
+        turn = 0
+        
+        while monster.is_alive() and hunter.is_alive():
+            weapon_idx = turn % hunter.get_weapon_count()
+            hunter.attack(weapon_idx, monster)
+
+            if not monster.is_alive():
+                print(f"✅ {monster.get_name()} повержен!")
+                break
+
+            monster.attack_hunter(hunter)
+            print(f"🛡️ {hunter.get_name()} HP: {hunter.get_hp()}")
+
+            if not hunter.is_alive():
+                print(f"💀 {hunter.get_name()} пал в бою!")
+                break
+
+            turn += 1
+            print("-" * 30)
+
+    print("\n" + "=" * 40)
+    if hunter.is_alive():
+        print("🏆 ПОБЕДА! Замок полностью зачищен от нечисти.")
+    else:
+        print("💀 ПОРАЖЕНИЕ. Нечисть оказалась сильнее.")
+
+run_game()
