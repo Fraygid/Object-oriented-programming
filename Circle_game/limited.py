@@ -2,8 +2,8 @@ import pgzrun
 import random
 import math
 
-# === КОНСТАНТЫ ===
-TITLE = 'Тык-тык (Финальная версия)'
+# === 1. КОНСТАНТЫ ===
+TITLE = 'Тык-тык (Рандомный лимит)'
 WIDTH = 800
 HEIGHT = 600
 
@@ -19,11 +19,12 @@ MAX_SPEED = 3.0
 MIN_CIRCLES = 3
 MAX_CIRCLES = 5
 
-# Общее количество шаров на одну игру
-TOTAL_BALLS_IN_GAME = 30
+# НОВОЕ: Диапазон общего количества шаров на игру
+MIN_BALLS_IN_GAME = 30
+MAX_BALLS_IN_GAME = 50
 
 
-# === КЛАСС КРУЖОЧКА ===
+# === 2. КЛАСС КРУЖОЧКА ===
 class Circle:
     def __init__(self):
         self.radius = random.randint(15, 35)
@@ -79,7 +80,7 @@ class Circle:
         return d <= self.radius
 
 
-# === КЛАСС ИГРЫ ===
+# === 3. КЛАСС ИГРЫ ===
 class Game:
     def __init__(self):
         self.setup_game()
@@ -89,11 +90,11 @@ class Game:
         self.score = 0
         self.speed_multiplier = 1.0
 
-        # Сбрасываем лимиты и статус игры
-        self.balls_left = TOTAL_BALLS_IN_GAME
+        # Случайное количество шаров от 30 до 50
+        self.balls_left = random.randint(MIN_BALLS_IN_GAME, MAX_BALLS_IN_GAME)
+        self.total_balls = self.balls_left  # запоминаем для HUD
         self.game_over = False
 
-        # Создаем начальные шарики (но не больше, чем общий лимит)
         start_count = min(random.randint(MIN_CIRCLES, MAX_CIRCLES), self.balls_left)
         for _ in range(start_count):
             self.circles.append(self.spawn_circle())
@@ -103,7 +104,6 @@ class Game:
         return Circle()
 
     def handle_click(self, pos):
-        # Игнорируем клики, если игра окончена
         if self.game_over:
             return
 
@@ -115,7 +115,6 @@ class Game:
                 break
 
     def update(self):
-        # Если игра окончена, ничего не обновляем
         if self.game_over:
             return
 
@@ -129,13 +128,11 @@ class Game:
                 new_circles.append(c)
         self.circles = new_circles
 
-        # Добавляем новые шары ТОЛЬКО если они есть в резерве
         for _ in range(popped):
             if self.balls_left > 0:
                 self.circles.append(self.spawn_circle())
                 self.balls_left -= 1
 
-        # Проверяем условие конца игры (на экране 0 шаров и резерв пуст)
         if len(self.circles) == 0 and self.balls_left == 0:
             self.game_over = True
 
@@ -148,17 +145,14 @@ class Game:
         for c in self.circles:
             c.draw()
 
-        # HUD (Интерфейс)
         screen.draw.text(f'Счет: {self.score}',
                          topleft=(20, 20), fontsize=30, color=TEXT_COLOR)
 
-        # Показываем, сколько шаров осталось в резерве
-        screen.draw.text(f'В резерве: {self.balls_left}',
-                         topright=(WIDTH - 20, 20), fontsize=30, color=SECONDARY_TEXT_COLOR)
+        # Показываем общее количество шаров в этой игре
+        screen.draw.text(f'Всего шаров: {self.total_balls} | В резерве: {self.balls_left}',
+                         topright=(WIDTH - 20, 20), fontsize=26, color=SECONDARY_TEXT_COLOR)
 
-        # Отрисовка экрана завершения игры
         if self.game_over:
-            # Затемнение фона (полупрозрачный прямоугольник)
             screen.draw.filled_rect(Rect((0, 0), (WIDTH, HEIGHT)), (0, 0, 0, 150))
             screen.draw.text('ИГРА ОКОНЧЕНА',
                              center=(WIDTH // 2, HEIGHT // 2 - 50), fontsize=60, color=GAME_OVER_COLOR)
@@ -167,14 +161,13 @@ class Game:
             screen.draw.text('Нажми R для новой игры',
                              center=(WIDTH // 2, HEIGHT // 2 + 60), fontsize=30, color=HINT_TEXT_COLOR)
         else:
-            # Подсказки (показываем только если игра идет)
             screen.draw.text('Нажимай ЛКМ на шарики, чтобы лопать их',
                              center=(WIDTH // 2, HEIGHT - 40), fontsize=24, color=HINT_TEXT_COLOR)
             screen.draw.text('R - новая игра | ESC - выход',
                              center=(WIDTH // 2, HEIGHT - 15), fontsize=20, color=HELP_TEXT_COLOR)
 
 
-# === ХУКИ PYGAME ZERO ===
+# === 4. ХУКИ PYGAME ZERO (СТРОГО В КОНЦЕ!) ===
 game = Game()
 def update():
     game.update()
