@@ -19,7 +19,7 @@ MAX_SPEED = 3.0
 MIN_CIRCLES = 3
 MAX_CIRCLES = 5
 
-# НОВОЕ: Диапазон общего количества шаров на игру
+# Диапазон общего количества шаров на игру
 MIN_BALLS_IN_GAME = 30
 MAX_BALLS_IN_GAME = 50
 
