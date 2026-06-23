@@ -19,14 +19,12 @@ MAX_SPEED = 3.0
 MIN_CIRCLES = 3
 MAX_CIRCLES = 5
 
-# Диапазон общего количества шаров на игру
 MIN_BALLS_IN_GAME = 30
 MAX_BALLS_IN_GAME = 50
 
-
 # === 2. КЛАСС КРУЖОЧКА ===
 class Circle:
-    def __init__(self):
+    def __init__(self): # Создаёт один шарик со случайными размером, цветом, позицией и направлением движения.
         self.radius = random.randint(15, 35)
         self.color = (random.randint(100, 255), random.randint(100, 255), random.randint(100, 255))
         self.x = random.randint(self.radius, WIDTH - self.radius)
@@ -41,7 +39,7 @@ class Circle:
         self.pop_progress = 0.0
         self.pop_speed = 0.2
 
-    def move(self, multiplier):
+    def move(self, multiplier): # Перемещает шарик на один кадр и обрабатывает отскок от стенок окна.
         if self.is_popping: return
 
         self.x += self.dx * multiplier
@@ -60,12 +58,12 @@ class Circle:
             self.y = HEIGHT - self.radius;
             self.dy = -self.dy
 
-    def update(self):
+    def update(self): # Обновляет анимацию лопанья. Возвращает True, когда шарик нужно удалить.
         if not self.is_popping: return False
         self.pop_progress += self.pop_speed
         return self.pop_progress >= 1
 
-    def draw(self):
+    def draw(self): # Рисует шарик на экране: обычный или уменьшающийся при лопанье.
         if not self.is_popping:
             screen.draw.filled_circle((self.x, self.y), self.radius, self.color)
             screen.draw.circle((self.x, self.y), self.radius, (255, 255, 255))
@@ -75,24 +73,22 @@ class Circle:
         if r < 1: r = 1
         screen.draw.filled_circle((self.x, self.y), r, self.color)
 
-    def is_clicked(self, pos):
+    def is_clicked(self, pos): # Проверяет, попал ли клик мыши внутрь шарика, используя расстояние до центра.
         d = math.sqrt((self.x - pos[0]) ** 2 + (self.y - pos[1]) ** 2)
         return d <= self.radius
 
-
 # === 3. КЛАСС ИГРЫ ===
 class Game:
-    def __init__(self):
+    def __init__(self): # Создаёт объект игры и сразу запускает начальную настройку.
         self.setup_game()
 
-    def setup_game(self):
+    def setup_game(self): # Сбрасывает игру в начальное состояние: обнуляет счёт и создаёт шарики.
         self.circles = []
         self.score = 0
         self.speed_multiplier = 1.0
 
-        # Случайное количество шаров от 30 до 50
         self.balls_left = random.randint(MIN_BALLS_IN_GAME, MAX_BALLS_IN_GAME)
-        self.total_balls = self.balls_left  # запоминаем для HUD
+        self.total_balls = self.balls_left
         self.game_over = False
 
         start_count = min(random.randint(MIN_CIRCLES, MAX_CIRCLES), self.balls_left)
@@ -100,10 +96,10 @@ class Game:
             self.circles.append(self.spawn_circle())
             self.balls_left -= 1
 
-    def spawn_circle(self):
+    def spawn_circle(self): # Создаёт и возвращает новый объект Circle.
         return Circle()
 
-    def handle_click(self, pos):
+    def handle_click(self, pos): # Обрабатывает клик мыши: находит шарик под курсором и запускает его лопанье.
         if self.game_over:
             return
 
@@ -114,7 +110,7 @@ class Game:
                 self.speed_multiplier = 1 + self.score * 0.1
                 break
 
-    def update(self):
+    def update(self): # Обновляет состояние игры за один кадр: анимации, удаление, создание и движение шаров.
         if self.game_over:
             return
 
@@ -139,7 +135,7 @@ class Game:
         for c in self.circles:
             c.move(self.speed_multiplier)
 
-    def draw(self):
+    def draw(self): # Отрисовывает один кадр: фон, шарики, счёт и подсказки на экране.
         screen.fill(BACKGROUND_COLOR)
 
         for c in self.circles:
@@ -148,7 +144,6 @@ class Game:
         screen.draw.text(f'Счет: {self.score}',
                          topleft=(20, 20), fontsize=30, color=TEXT_COLOR)
 
-        # Показываем общее количество шаров в этой игре
         screen.draw.text(f'Всего шаров: {self.total_balls} | В резерве: {self.balls_left}',
                          topright=(WIDTH - 20, 20), fontsize=26, color=SECONDARY_TEXT_COLOR)
 
@@ -166,20 +161,21 @@ class Game:
             screen.draw.text('R - новая игра | ESC - выход',
                              center=(WIDTH // 2, HEIGHT - 15), fontsize=20, color=HELP_TEXT_COLOR)
 
-
-# === 4. ХУКИ PYGAME ZERO (СТРОГО В КОНЦЕ!) ===
+# === 4. ХУКИ PYGAME ZERO ===
 game = Game()
-def update():
+def update(): # Вызывается ~60 раз в секунду для обновления логики игры.
     game.update()
 
-def draw():
+
+def draw(): # Вызывается ~60 раз в секунду для отрисовки кадра.
     game.draw()
 
 def on_mouse_down(pos, button):
+    # Срабатывает при нажатии кнопки мыши
     if button == mouse.LEFT:
         game.handle_click(pos)
 
-def on_key_down(key):
+def on_key_down(key): # Срабатывает при нажатии клавиши на клавиатуре.
     if key == keys.R:
         game.setup_game()
     elif key == keys.ESCAPE:
